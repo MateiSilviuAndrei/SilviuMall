@@ -1,6 +1,7 @@
 package com.example.silviumall;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,8 @@ import com.google.android.material.card.MaterialCardView;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+
+import static com.example.silviumall.GroceryItemActivity.GROCERY_ITEM_KEY;
 
 public class GroceryItemAdapter extends RecyclerView.Adapter<GroceryItemAdapter.ViewHolder>{
 
@@ -36,7 +39,7 @@ public class GroceryItemAdapter extends RecyclerView.Adapter<GroceryItemAdapter.
     @Override
     public void onBindViewHolder(@NonNull GroceryItemAdapter.ViewHolder holder, int position) {
         holder.txtName.setText(items.get(position).getName());
-        holder.txtPrice.setText(items.get(position).getName());
+        holder.txtPrice.setText(String.valueOf(items.get(position).getPrice()) + "RON");
         Glide.with(context)
                 .asBitmap()
                 .load(items.get(position).getImageURL())
@@ -45,7 +48,9 @@ public class GroceryItemAdapter extends RecyclerView.Adapter<GroceryItemAdapter.
         holder.parent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                
+                Intent intent = new Intent(context, GroceryItemActivity.class);
+                intent.putExtra(GROCERY_ITEM_KEY, items.get(position));
+                context.startActivity(intent);
             }
         });
     }
