@@ -15,6 +15,7 @@ public class Utils {
 
     private static final String ALL_ITEMS_KEY = "all_items";
     private static final String DB_NAME = "fake_database";
+    public static final String CART_ITEMS_KEY = "cart_items";
     private static Gson gson = new Gson();
     private static Type groceryListType = new TypeToken<ArrayList<GroceryItem>>(){}.getType();
 
@@ -85,6 +86,62 @@ public class Utils {
             editor.putString(ALL_ITEMS_KEY, gson.toJson(newItems));
             editor.commit();
         }
+    }
+
+    public static void addReview(Context context, Review review) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(DB_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        ArrayList<GroceryItem> allItems = getAllItems(context);
+        if (null != allItems) {
+            ArrayList<GroceryItem> newItems = new ArrayList<GroceryItem>();
+            for (GroceryItem i : allItems) {
+                if (i.getId() == review.getGroceryItemId()) {
+                    ArrayList<Review> reviews = i.getReviews();
+                    reviews.add(review);
+                    i.setReviews(reviews);
+                    newItems.add(i);
+                }else {
+                    newItems.add(i);
+                }
+            }
+
+            editor.remove(ALL_ITEMS_KEY);
+            editor.putString(ALL_ITEMS_KEY, gson.toJson(newItems));
+            editor.commit();
+        }
+    }
+
+    public static ArrayList<Review> getReviewsById (Context context, int itemId) {
+        ArrayList<GroceryItem> allItems = getAllItems(context);
+        if (null != allItems) {
+            for (GroceryItem i : allItems) {
+                if (i.getId() == itemId) {
+                    ArrayList<Review> reviews = i.getReviews();
+                    return reviews;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public static void addItemToCart(Context context, GroceryItem item) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(DB_NAME, Context.MODE_PRIVATE);
+        ArrayList<GroceryItem> cartItems = gson.fromJson(sharedPreferences.getString(CART_ITEMS_KEY, null), groceryListType);
+        if (cartItems == null) {
+            cartItems = new ArrayList<GroceryItem>();
+        }
+        cartItems.add(item);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(CART_ITEMS_KEY);
+        editor.putString(CART_ITEMS_KEY, gson.toJson(cartItems));
+        editor.commit();
+    }
+
+    public static ArrayList<GroceryItem> getCartItems(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(DB_NAME, Context.MODE_PRIVATE);
+        ArrayList<GroceryItem> cartItems = gson.fromJson(sharedPreferences.getString(CART_ITEMS_KEY, null), groceryListType);
+        return cartItems;
     }
 
     public static int getID() {
