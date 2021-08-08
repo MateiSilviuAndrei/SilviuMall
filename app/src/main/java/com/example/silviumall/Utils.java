@@ -144,6 +144,38 @@ public class Utils {
         return cartItems;
     }
 
+    public static ArrayList<GroceryItem> searchForItems(Context context, String text) {
+        ArrayList<GroceryItem> allItems = getAllItems(context);
+        if (null != allItems) {
+            ArrayList<GroceryItem> items = new ArrayList<GroceryItem>();
+            for (GroceryItem item : allItems) {
+                if (item.getName().equalsIgnoreCase(text)) {
+                    items.add(item);
+                }
+
+                String[] names = item.getName().split(" ");
+                for (int i = 0; i < names.length; i++) {
+                    if (text.equalsIgnoreCase(names[i])) {
+                        boolean doesExist = false;
+
+                        for (GroceryItem j : items) {
+                            if (j.getId() == item.getId()) {
+                                doesExist = true;
+                            }
+                        }
+
+                        if (!doesExist) {
+                            items.add(item);
+                        }
+                    }
+                }
+            }
+
+            return items;
+        }
+
+        return null;
+    }
     public static int getID() {
         ID++;
         return ID;
