@@ -1,5 +1,8 @@
 package com.example.silviumall;
 
+import static com.example.silviumall.AllCategoriesDialog.ALL_CATEGORIES;
+import static com.example.silviumall.AllCategoriesDialog.CALLING_ACTIVITY;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -21,7 +24,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends AppCompatActivity implements AllCategoriesDialog.GetCategoty {
     private static final String TAG = "SearchActivity";
 
     private MaterialToolbar toolbar;
@@ -46,6 +49,18 @@ public class SearchActivity extends AppCompatActivity {
         adapter = new GroceryItemAdapter(this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+
+        Intent intent = getIntent();
+        if (null != intent) {
+            String category = intent.getStringExtra("category");
+            if (null != category) {
+                ArrayList<GroceryItem> items = Utils.getItemsByCategory(this, category);
+                if (null != items) {
+                    adapter.setItems(items);
+                }
+            }
+        }
+
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,6 +84,115 @@ public class SearchActivity extends AppCompatActivity {
 
             }
         });
+
+        ArrayList<String> categories = Utils.getCategories(this);
+        if (null != categories) {
+            if (categories.size() > 0) {
+                if (categories.size() == 1) {
+                    showCategories(categories, 1);
+                }else if (categories.size() == 2) {
+                    showCategories(categories, 2);
+                }else {
+                    showCategories(categories, 3);
+                }
+            }
+        }
+        txtAllCategories.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AllCategoriesDialog dialog = new AllCategoriesDialog();
+                Bundle bundle = new Bundle();
+                bundle.putStringArrayList(ALL_CATEGORIES, Utils.getCategories(SearchActivity.this));
+                bundle.putString(CALLING_ACTIVITY, "search_activity");
+                dialog.setArguments(bundle);
+                dialog.show(getSupportFragmentManager(), "all categories dialog");
+            }
+        });
+    }
+
+    private void showCategories(ArrayList<String> categories, int i) {
+        switch (i) {
+            case 1:
+                firstCat.setVisibility(View.VISIBLE);
+                firstCat.setText(categories.get(0));
+                secondCat.setVisibility(View.GONE);
+                thirdCat.setVisibility(View.GONE);
+                firstCat.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ArrayList<GroceryItem> items = Utils.getItemsByCategory(SearchActivity.this, categories.get(0));
+                        if (null != items) {
+                            adapter.setItems(items);
+                        }
+                    }
+                });
+                break;
+            case 2:
+                firstCat.setVisibility(View.VISIBLE);
+                firstCat.setText(categories.get(0));
+                secondCat.setVisibility(View.VISIBLE);
+                secondCat.setText(categories.get(1));
+                thirdCat.setVisibility(View.GONE);
+                firstCat.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ArrayList<GroceryItem> items = Utils.getItemsByCategory(SearchActivity.this, categories.get(0));
+                        if (null != items) {
+                            adapter.setItems(items);
+                        }
+                    }
+                });
+                secondCat.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ArrayList<GroceryItem> items = Utils.getItemsByCategory(SearchActivity.this, categories.get(1));
+                        if (null != items) {
+                            adapter.setItems(items);
+                        }
+                    }
+                });
+                break;
+            case 3:
+                firstCat.setVisibility(View.VISIBLE);
+                firstCat.setText(categories.get(0));
+                secondCat.setVisibility(View.VISIBLE);
+                secondCat.setText(categories.get(1));
+                thirdCat.setVisibility(View.VISIBLE);
+                thirdCat.setText(categories.get(2));
+                firstCat.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ArrayList<GroceryItem> items = Utils.getItemsByCategory(SearchActivity.this, categories.get(0));
+                        if (null != items) {
+                            adapter.setItems(items);
+                        }
+                    }
+                });
+                secondCat.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ArrayList<GroceryItem> items = Utils.getItemsByCategory(SearchActivity.this, categories.get(1));
+                        if (null != items) {
+                            adapter.setItems(items);
+                        }
+                    }
+                });
+                thirdCat.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ArrayList<GroceryItem> items = Utils.getItemsByCategory(SearchActivity.this, categories.get(2));
+                        if (null != items) {
+                            adapter.setItems(items);
+                        }
+                    }
+                });
+                break;
+            default:
+                firstCat.setVisibility(View.GONE);
+                secondCat.setVisibility(View.GONE);
+                thirdCat.setVisibility(View.GONE);
+                break;
+        }
     }
 
     private void initSearch() {
@@ -84,7 +208,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     public void initBottomNavView() {
-        bottomNavigationView.setSelectedItemId(R.id.home);
+        bottomNavigationView.setSelectedItemId(R.id.search);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -116,5 +240,13 @@ public class SearchActivity extends AppCompatActivity {
         txtAllCategories = findViewById(R.id.txtAllCategories);
         bottomNavigationView = findViewById(R.id.bottomNavView);
         recyclerView = findViewById(R.id.recyclerView);
+    }
+
+    @Override
+    public void onGetCategoryResult(String category) {
+        ArrayList<GroceryItem> items = Utils.getItemsByCategory(this, category);
+        if (null != items) {
+            adapter.setItems(items);
+        }
     }
 }

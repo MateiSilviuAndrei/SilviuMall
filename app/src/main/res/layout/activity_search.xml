@@ -48,21 +48,24 @@
                 android:id="@+id/txtFirstCategory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="First Category" />
+                android:text="First Category"
+                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/txtSecondCategory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:text="Second Category" />
+                android:text="Second Category"
+                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/txtThirdCategory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:text="Third Category" />
+                android:text="Third Category"
+                android:visibility="gone"/>
 
         </LinearLayout>
 
@@ -77,12 +80,12 @@
             android:textColor="@color/design_default_color_primary" />
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_below="@+id/txtAllCategories"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
-            android:id="@+id/recyclerView"/>
+            android:layout_marginTop="10dp" />
 
     </RelativeLayout>
 

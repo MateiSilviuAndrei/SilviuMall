@@ -1,5 +1,8 @@
 package com.example.silviumall;
 
+import static com.example.silviumall.AllCategoriesDialog.ALL_CATEGORIES;
+import static com.example.silviumall.AllCategoriesDialog.CALLING_ACTIVITY;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -39,6 +42,14 @@ public class MainActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.cart:
                         Toast.makeText(MainActivity.this, "Cart Selected", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.categories:
+                        AllCategoriesDialog dialog = new AllCategoriesDialog();
+                        Bundle bundle = new Bundle();
+                        bundle.putStringArrayList(ALL_CATEGORIES, Utils.getCategories(MainActivity.this));
+                        bundle.putString(CALLING_ACTIVITY, "main_activity");
+                        dialog.setArguments(bundle);
+                        dialog.show(getSupportFragmentManager(), "all categories dialog");
                         break;
                     default:
                         break;
