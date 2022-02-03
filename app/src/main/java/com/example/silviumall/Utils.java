@@ -12,6 +12,7 @@ import java.util.ArrayList;
 public class Utils {
 
     private static int ID = 0;
+    private static int ORDER_ID = 0;
 
     private static final String ALL_ITEMS_KEY = "all_items";
     private static final String DB_NAME = "fake_database";
@@ -244,8 +245,59 @@ public class Utils {
         return null;
     }
 
+    public static void deleteItemFromCart(Context context, GroceryItem item) {
+        ArrayList<GroceryItem> cartItems = getCartItems(context);
+        if (null != cartItems) {
+            ArrayList<GroceryItem> newItems = new ArrayList<GroceryItem>();
+            for (GroceryItem i : cartItems) {
+                if (i.getId() != item.getId()) {
+                    newItems.add(i);
+                }
+            }
+            SharedPreferences sharedPreferences = context.getSharedPreferences(DB_NAME, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.remove(CART_ITEMS_KEY);
+            editor.putString(CART_ITEMS_KEY, gson.toJson(newItems));
+            editor.commit();
+        }
+    }
+
+    public static void clearCartItems(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(DB_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(CART_ITEMS_KEY);
+        editor.commit();
+    }
+
+    public static void increasePopularityPoint(Context context, GroceryItem item, int points) {
+        ArrayList<GroceryItem> allItems = getAllItems(context);
+        if (null != allItems) {
+            ArrayList<GroceryItem> newItems = new ArrayList<GroceryItem>();
+            for (GroceryItem i: allItems) {
+                if (i.getId() == item.getId()) {
+                    i.setPopularityPoint(i.getPopularityPoint() + points);
+                    newItems.add(i);
+                }else {
+                    newItems.add(i);
+                }
+            }
+
+            SharedPreferences sharedPreferences = context.getSharedPreferences(DB_NAME, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.remove(ALL_ITEMS_KEY);
+            Gson gson = new Gson();
+            editor.putString(ALL_ITEMS_KEY, gson.toJson(newItems));
+            editor.commit();
+        }
+    }
+
     public static int getID() {
         ID++;
         return ID;
+    }
+
+    public static int getOrderId() {
+        ORDER_ID++;
+        return ORDER_ID;
     }
 }

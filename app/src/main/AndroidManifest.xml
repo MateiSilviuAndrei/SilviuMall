@@ -13,8 +13,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SilviuMall">
         <activity
+            android:name=".CartActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustPan|adjustResize"/>
+        <activity
             android:name=".SearchActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:windowSoftInputMode="adjustPan|adjustResize"/>
         <activity android:name=".GroceryItemActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
