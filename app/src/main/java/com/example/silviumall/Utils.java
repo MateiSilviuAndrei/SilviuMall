@@ -2,6 +2,8 @@ package com.example.silviumall;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
+import android.widget.ArrayAdapter;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -10,6 +12,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class Utils {
+    private static final String TAG = "Utils";
 
     private static int ID = 0;
     private static int ORDER_ID = 0;
@@ -286,6 +289,27 @@ public class Utils {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.remove(ALL_ITEMS_KEY);
             Gson gson = new Gson();
+            editor.putString(ALL_ITEMS_KEY, gson.toJson(newItems));
+            editor.commit();
+        }
+    }
+
+    public static void changeUserPoint (Context context, GroceryItem item, int points) {
+        Log.d(TAG, "changeUserPoint: Attempting to add " + points + " to " + item.getName());
+        ArrayList<GroceryItem> allItems = getAllItems(context);
+        if (null != allItems) {
+            ArrayList<GroceryItem> newItems = new ArrayList<GroceryItem>();
+            for (GroceryItem i: allItems) {
+                if (i.getId() == item.getId()) {
+                    i.setUserPoint(i.getUserPoint() + points);
+                }
+
+                newItems.add(i);
+            }
+
+            SharedPreferences sharedPreferences = context.getSharedPreferences(DB_NAME, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.remove(ALL_ITEMS_KEY);
             editor.putString(ALL_ITEMS_KEY, gson.toJson(newItems));
             editor.commit();
         }
